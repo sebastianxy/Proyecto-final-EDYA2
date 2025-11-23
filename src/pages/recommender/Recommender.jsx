@@ -3,6 +3,7 @@ import { DataContext } from "../../context/DataContext";
 import { AuthContext } from "../../context/AuthContext";
 import GameCard from "../../components/index/GameCard";
 import { useRecommendations } from "../../hooks/useRecommendations";
+import styles from "./Recommender.module.scss";
 
 import { db } from "../../firebase/db";
 import { doc, updateDoc, arrayUnion, serverTimestamp } from "firebase/firestore";
@@ -28,7 +29,6 @@ export default function Recommender() {
     });
 
     const handleRecommendClick = async (game) => {
-
         addToStack(game);
 
         if (user) {
@@ -41,24 +41,22 @@ export default function Recommender() {
     };
 
     return (
-        <div style={{ padding: 20 }}>
-            <h2>Encuentra qué jugar ahora</h2>
+        <div className={styles.container}>
+            <h2 className={styles.title}>Recomendaciones para ti</h2>
+            <p className={styles.subtitle}>Basado en tus gustos:</p>
 
             <input
+                className={styles.searchInput}
                 placeholder="¿Qué te provoca jugar?"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
             />
 
-            <div style={{ marginTop: 20 }}>
+            <div className={styles.tags}>
                 {tags.map((t) => (
                     <button
                         key={t.id}
-                        style={{
-                            margin: 4,
-                            background: selectedTags.includes(t.name) ? "#333" : "#ddd",
-                            color: selectedTags.includes(t.name) ? "white" : "black",
-                        }}
+                        className={`${styles.tagBtn} ${selectedTags.includes(t.name) ? styles.tagActive : ""}`}
                         onClick={() => toggleTag(t.name)}
                     >
                         {t.name}
@@ -66,7 +64,7 @@ export default function Recommender() {
                 ))}
             </div>
 
-            <div style={{ marginTop: 20 }}>
+            <div className={styles.grid}>
                 {recommended.map((game) => (
                     <div key={game.id} onClick={() => handleRecommendClick(game)}>
                         <GameCard game={game} />

@@ -1,0 +1,46 @@
+$bg: #fafafa;
+$title-color: #111;
+$text-color: #444;
+$btn-bg: #222;
+$btn-bg-hover: #000;
+
+.page {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  background: $bg;
+  text-align: center;
+  padding: 40px;
+}
+
+.container {
+  max-width: 600px;
+}
+
+.title {
+  font-size: 40px;
+  font-weight: 800;
+  margin-bottom: 12px;
+  color: $title-color;
+}
+
+.subtitle {
+  font-size: 18px;
+  margin-bottom: 28px;
+  color: $text-color;
+}
+
+.startBtn {
+  display: inline-block;
+  padding: 12px 24px;
+  background: $btn-bg;
+  color: white;
+  border-radius: 8px;
+  text-decoration: none;
+  font-size: 16px;
+  transition: background 0.15s ease;
+
+  &:hover {
+    background: $btn-bg-hover;
+  }
+}

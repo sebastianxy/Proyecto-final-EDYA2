@@ -4,10 +4,11 @@ import { DataContext } from "../../context/DataContext";
 import { db } from "../../firebase/db";
 import { doc, getDoc, updateDoc, arrayRemove, arrayUnion } from "firebase/firestore";
 import { Link } from "react-router-dom";
+import styles from "./Profile.module.scss";
 
 export default function Profile() {
     const { user, logout } = useContext(AuthContext);
-    const { games, stack } = useContext(DataContext);
+    const { games } = useContext(DataContext);
 
     const [favorites, setFavorites] = useState([]);
     const [historyIds, setHistoryIds] = useState([]);
@@ -42,42 +43,62 @@ export default function Profile() {
     const historyGames = games.filter((g) => historyIds.includes(g.id));
 
     return (
-        <div style={{ padding: 20 }}>
-            <h2>Perfil</h2>
-            <p>Email: {user.email}</p>
+        <div className={styles.page}>
+            <h2 className={styles.title}>Perfil</h2>
+            <p className={styles.email}>Email: {user.email}</p>
 
-            <h3>Favoritos</h3>
+            {/* FAVORITOS */}
+            <h3 className={styles.sectionTitle}>Favoritos</h3>
             {favoriteGames.length === 0 && <p>No tienes favoritos.</p>}
-            <ul>
+            <div className={styles.cardGrid}>
                 {favoriteGames.map((g) => (
-                    <li key={g.id}>
-                        <Link to={`/game/${g.id}`}>{g.name}</Link>{" "}
-                        <button onClick={() => toggleFavorite(g.id)}>Quitar</button>
-                    </li>
-                ))}
-            </ul>
+                    <div key={g.id} className={styles.card}>
+                        <img src={g.image} alt={g.name} className={styles.cardImg} />
 
-            <h3>Historial (Firestore)</h3>
+                        <div className={styles.cardBody}>
+                            <Link to={`/game/${g.id}`} className={styles.cardName}>
+                                {g.name}
+                            </Link>
+
+                            <button
+                                className={styles.favBtn}
+                                onClick={() => toggleFavorite(g.id)}
+                            >
+                                Quitar ⭐
+                            </button>
+                        </div>
+                    </div>
+                ))}
+            </div>
+
+            {/* HISTORIAL */}
+            <h3 className={styles.sectionTitle}>Historial</h3>
             {historyGames.length === 0 && <p>No hay historial aún.</p>}
-            <ul>
+
+            <div className={styles.cardGrid}>
                 {historyGames.map((g) => (
-                    <li key={g.id}>
-                        <Link to={`/game/${g.id}`}>{g.name}</Link>{" "}
-                        <button onClick={() => toggleFavorite(g.id)}>
-                            {favorites.includes(g.id) ? "★" : "☆"}
-                        </button>
-                    </li>
-                ))}
-            </ul>
+                    <div key={g.id} className={styles.card}>
+                        <img src={g.image} alt={g.name} className={styles.cardImg} />
 
-            <h3>Últimas recomendaciones (Stack)</h3>
-            <ul>
-                {stack.toArray().map((g, i) => (
-                    <li key={i}>{g.name}</li>
-                ))}
-            </ul>
+                        <div className={styles.cardBody}>
+                            <Link to={`/game/${g.id}`} className={styles.cardName}>
+                                {g.name}
+                            </Link>
 
-            <button onClick={logout}>Cerrar sesión</button>
+                            <button
+                                className={styles.favBtn}
+                                onClick={() => toggleFavorite(g.id)}
+                            >
+                                {favorites.includes(g.id) ? "★ Favorito" : "☆ Agregar"}
+                            </button>
+                        </div>
+                    </div>
+                ))}
+            </div>
+
+            <button className={styles.logout} onClick={logout}>
+                Cerrar sesión
+            </button>
         </div>
     );
 }

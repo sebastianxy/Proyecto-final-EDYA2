@@ -1,22 +1,29 @@
 import { Link } from "react-router-dom";
+import styles from "./GameCard.module.scss";
 
 export default function GameCard({ game }) {
     return (
-        <div style={{ border: "1px solid #333", padding: "10px", margin: "6px" }}>
-
-            
+        <div className={styles.card}>
             {game.image && (
                 <img
+                    className={styles.cover}
                     src={`/${game.image}`}
                     alt={game.name}
-                    style={{ width: "220px", borderRadius: "8px", marginBottom: "8px" }}
+                    onError={(e) => (e.currentTarget.src = "/images/default.jpg")}
                 />
             )}
 
-            <h3>{game.name}</h3>
-            <p>{game.description}</p>
+            <div className={styles.body}>
+                <h3 className={styles.name}>{game.name}</h3>
+                <p className={styles.desc}>{game.description}</p>
 
-            <Link to={`/game/${game.id}`}>Ver más</Link>
+                <div className={styles.footer}>
+                    <Link to={`/game/${game.id}`} className={styles.more}>
+                        Ver más
+                    </Link>
+                    <span className={styles.heart}>♡</span>
+                </div>
+            </div>
         </div>
     );
 }

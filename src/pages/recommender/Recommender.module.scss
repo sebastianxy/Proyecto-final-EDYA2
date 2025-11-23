@@ -1,0 +1,79 @@
+$radius: 8px;
+$text-dark: #444;
+$border-light: #bbb;
+$tag-bg: #eee;
+$tag-bg-hover: #ddd;
+$tag-active-bg: #222;
+$tag-active-text: #fff;
+
+@mixin input-base {
+  height: 38px;
+  border-radius: $radius;
+  border: 1px solid $border-light;
+  padding: 0 12px;
+  font-size: 14px;
+  background: #fff;
+  outline: none;
+
+  &:focus {
+    border-color: #555;
+  }
+}
+
+@mixin tag-button {
+  padding: 6px 10px;
+  font-size: 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.container {
+  max-width: 1100px;
+}
+
+.title {
+  font-size: 26px;
+  font-weight: 800;
+  margin: 0;
+}
+
+.subtitle {
+  margin: 6px 0 14px;
+  color: $text-dark;
+}
+
+.searchInput {
+  width: min(650px, 100%);
+  @include input-base;
+}
+
+.tags {
+  margin-top: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+
+  .tagBtn {
+    @include tag-button;
+    border: 1px solid #444;
+    background: $tag-bg;
+
+    &:hover {
+      background: $tag-bg-hover;
+    }
+  }
+
+  .tagActive {
+    background: $tag-active-bg;
+    color: $tag-active-text;
+    border-color: $tag-active-bg;
+  }
+}
+
+.grid {
+  margin-top: 18px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
+}

@@ -1,44 +1,76 @@
 import { useParams } from "react-router-dom";
-import { useContext } from "react";
+import { useContext, useState } from "react"; // ⭐ AÑADIDO
 import { DataContext } from "../../context/DataContext";
+import styles from "./GameDetail.module.scss";
 
 export default function GameDetail() {
     const { id } = useParams();
     const { games } = useContext(DataContext);
 
+    const [selectedImg, setSelectedImg] = useState(null); // ⭐ AÑADIDO
+
+    // Si aún no cargan los juegos
+    if (!games || games.length === 0) {
+        return <p className={styles.loading}>Cargando datos...</p>;
+    }
+
     const game = games.find((g) => g.id === id);
 
-    if (!game) return <p>No existe este juego.</p>;
+    if (!game) return <p className={styles.notFound}>No existe este juego.</p>;
 
     return (
-        <div style={{ padding: 20 }}>
-            <h2>{game.name}</h2>
-            <p>{game.description}</p>
+        <div className={styles.page}>
 
-            {game.image && (
+            {/* HEADER */}
+            <div className={styles.header}>
+                <h1>{game.name}</h1>
+                <p className={styles.description}>{game.description}</p>
+            </div>
+
+            {/* MAIN CARD */}
+            <div className={styles.mainCard}>
                 <img
                     src={`/${game.image}`}
                     alt={game.name}
-                    style={{ width: "360px", borderRadius: "10px", margin: "12px 0" }}
+                    className={styles.cover}
                 />
-            )}
 
-            <h4>Gameplay:</h4>
-            <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
-                {(game.gallery ?? []).map((img, i) => (
+                <div className={styles.details}>
+                    <p><strong>Año:</strong> {game.releaseYear}</p>
+                    <p><strong>Rating:</strong> {game.rating}/10</p>
+
+                    <div className={styles.tags}>
+                        {game.tags?.map((tag) => (
+                            <span key={tag} className={styles.tag}>
+                                {tag}
+                            </span>
+                        ))}
+                    </div>
+                </div>
+            </div>
+
+            {/* GAMEPLAY */}
+            <h2 className={styles.subTitle}>Gameplay</h2>
+
+            <div className={styles.gallery}>
+                {game.gallery?.map((img, i) => (
                     <img
                         key={i}
                         src={`/${img}`}
-                        alt={`${game.name} gameplay ${i + 1}`}
-                        style={{ width: "280px", borderRadius: "10px" }}
+                        className={styles.galleryImg}
+                        alt={`Gameplay ${i + 1}`}
+                        onClick={() => setSelectedImg(`/${img}`)}       // ⭐ AÑADIDO
                     />
                 ))}
             </div>
 
-            <h4 style={{ marginTop: 20 }}>Tags:</h4>
-            {(game.tags ?? []).map((t) => (
-                <span key={t} style={{ marginRight: 10 }}>{t}</span>
-            ))}
+            {/* ⭐ MODAL PARA IMAGEN AMPLIADA */}
+            {selectedImg && (
+                <div className={styles.modal} onClick={() => setSelectedImg(null)}>
+                    <img src={selectedImg} className={styles.modalImg} alt="Ampliada" />
+                </div>
+            )}
+
         </div>
     );
 }
