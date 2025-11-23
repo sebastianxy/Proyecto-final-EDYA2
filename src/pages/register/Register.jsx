@@ -3,66 +3,74 @@ import { auth } from "../../firebase/auth";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { AuthContext } from "../../context/AuthContext";
 import { Navigate, Link } from "react-router-dom";
+import { db } from "../../firebase/db";
+import { doc, setDoc } from "firebase/firestore";
 import styles from "./Register.module.scss";
 
 export default function Register() {
-    const { user } = useContext(AuthContext);
+  const { user } = useContext(AuthContext);
 
-    const [email, setEmail] = useState("");
-    const [pass, setPass] = useState("");
-    const [error, setError] = useState("");
+  const [email, setEmail] = useState("");
+  const [pass, setPass] = useState("");
+  const [error, setError] = useState("");
 
-    // Si ya está logueado → redirige
-    if (user) return <Navigate to="/recommender" />;
+  if (user) return <Navigate to="/recommender" />;
 
-    const handleRegister = async () => {
-        setError("");
+  const handleRegister = async () => {
+    setError("");
 
-        if (!email || !pass) {
-            setError("Debe ingresar email y contraseña.");
-            return;
-        }
+    if (!email || !pass) {
+      setError("Debe ingresar email y contraseña.");
+      return;
+    }
 
-        if (pass.length < 6) {
-            setError("La contraseña debe tener al menos 6 caracteres.");
-            return;
-        }
+    if (pass.length < 6) {
+      setError("La contraseña debe tener al menos 6 caracteres.");
+      return;
+    }
 
-        try {
-            await createUserWithEmailAndPassword(auth, email, pass);
-        } catch (err) {
-            if (err.code === "auth/invalid-email") setError("Email inválido.");
-            else if (err.code === "auth/email-already-in-use") setError("Este email ya está registrado.");
-            else if (err.code === "auth/weak-password") setError("La contraseña es muy débil.");
-            else setError("Error al crear la cuenta.");
-        }
-    };
+    try {
+      const cred = await createUserWithEmailAndPassword(auth, email, pass);
 
-    return (
-        <div className={styles.page}>
-            <div className={styles.card}>
-                <h2>Crear cuenta</h2>
+      // ⬅️ ***AQUÍ ESTÁ LA SOLUCIÓN***
+      await setDoc(doc(db, "users", cred.user.uid), {
+        favorites: [],
+        history: []
+      });
 
-                <input
-                    placeholder="Correo"
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                />
+    } catch (err) {
+      if (err.code === "auth/invalid-email") setError("Email inválido.");
+      else if (err.code === "auth/email-already-in-use") setError("Este email ya está registrado.");
+      else if (err.code === "auth/weak-password") setError("La contraseña es muy débil.");
+      else setError("Error al crear la cuenta.");
+    }
+  };
 
-                <input
-                    placeholder="Contraseña"
-                    type="password"
-                    value={pass}
-                    onChange={(e) => setPass(e.target.value)}
-                />
+  return (
+    <div className={styles.page}>
+      <div className={styles.card}>
+        <h2>Crear cuenta</h2>
 
-                <button onClick={handleRegister}>Registrarse</button>
+        <input
+          placeholder="Correo"
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
 
-                {error && <p className={styles.error}>{error}</p>}
+        <input
+          placeholder="Contraseña"
+          type="password"
+          value={pass}
+          onChange={(e) => setPass(e.target.value)}
+        />
 
-                <Link to="/login">¿Ya tienes cuenta? Inicia sesión</Link>
-            </div>
-        </div>
-    );
+        <button onClick={handleRegister}>Registrarse</button>
+
+        {error && <p className={styles.error}>{error}</p>}
+
+        <Link to="/login">¿Ya tienes cuenta? Inicia sesión</Link>
+      </div>
+    </div>
+  );
 }

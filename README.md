@@ -1,6 +1,6 @@
 Sebastian Cobos Alvarado y Carlos Chalaca
 
-Enalce Github: https://github.com/sebastianxy/Proyecto-final-EDYA2
+Enlace Github: https://github.com/sebastianxy/Proyecto-final-EDYA2
 
 Enlace Figma: https://www.figma.com/design/PiMoBbzqPNjmlX1cBSP3k5/Edya-proyecto?node-id=0-1&t=BBafFl6e4MX99SMY-1
 
